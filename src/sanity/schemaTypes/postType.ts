@@ -55,11 +55,15 @@ export const postType = defineType({
     select: {
       title: 'title',
       author: 'author.name',
+      slug: 'slug.current',   // ✅ Add this
       media: 'mainImage',
     },
-    prepare(selection) {
-      const {author} = selection
-      return {...selection, subtitle: author && `by ${author}`}
-    },
-  },
+    prepare({title, author, slug, media}) {
+      return {
+        title,
+        subtitle: slug ? `/${slug}` : 'Missing slug', // ✅ shows where it will preview
+        media,
+      }
+    }
+  }
 })

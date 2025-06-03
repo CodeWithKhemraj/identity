@@ -2,6 +2,7 @@ import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/lib/client";
+import { draftMode } from "next/headers";
 import Link from "next/link";
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
@@ -19,11 +20,12 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+  const { isEnabled } = await draftMode();
+
+  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options );
   const postImageUrl = post.mainImage
     ? urlFor(post.mainImage)?.width(550).height(310).url()
     : null;
-    
   return (
     <main className="container mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-4">
       <Link href="/" className="hover:underline text-black">
